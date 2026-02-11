@@ -13,11 +13,16 @@ automation/
 │   │   └── requirements.txt
 │   └── robotframework/   # Python + Playwright + Robot Framework
 │       ├── keywords/     # Python keyword libraries
-│       │   ├── LoginLibrary.py
-│       │   └── TodoLibrary.py
+│       │   ├── LoginLibrary/
+│       │   │   ├── __init__.py
+│       │   │   └── LoginLibrary.py
+│       │   └── TodoLibrary/
+│       │       ├── __init__.py
+│       │       └── TodoLibrary.py
 │       ├── resources/    # Robot resource files
-│       ├── tests/        # *.robot test files
+│       ├── tests/       # *.robot test files
 │       │   └── login.robot
+│       ├── run_tests.bat    # Windows batch script to run tests
 │       └── requirements.txt
 ├── javascript/
 │   └── playwright/       # JavaScript Playwright tests (future)
@@ -40,7 +45,7 @@ Create custom Python keyword libraries using `@library` decorator.
 
 **Example Keyword Library:**
 ```python
-# keywords/LoginLibrary.py
+# keywords/LoginLibrary/LoginLibrary.py
 from playwright.sync_api import Page
 from robot.api.deco import library, keyword
 
@@ -97,10 +102,82 @@ pytest test_*.py -v
 ```
 
 ### Python + Robot Framework
+
+#### Prerequisites
+
+1. Create a virtual environment:
 ```bash
 cd automation/python/robotframework
+python -m venv venv
+```
+
+2. Activate the virtual environment:
+```powershell
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Windows CMD
+venv\Scripts\activate.bat
+
+# Linux/macOS
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
 pip install -r requirements.txt
+```
+
+4. Install Playwright browsers:
+```bash
+python -m playwright install chromium
+```
+
+#### Running Tests
+
+**Method 1: Using batch script (Windows)**
+```powershell
+.\run_tests.bat
+```
+
+**Method 2: Using PYTHONPATH directly**
+```bash
+set PYTHONPATH=.
+robot --outputdir results tests\login.robot
+```
+
+**Method 3: Using robot --pythonpath option**
+```bash
+robot --pythonpath . --outputdir results tests\login.robot
+```
+
+#### Test Commands
+
+**Run all tests:**
+```bash
 robot --outputdir results tests/
+```
+
+**Run specific test file:**
+```bash
+robot --outputdir results tests/login.robot
+```
+
+**Run tests with tags:**
+```bash
+robot --outputdir results --include smoke tests/
+robot --outputdir results --exclude wip tests/
+```
+
+**Run in headed mode (see browser):**
+```bash
+robot --outputdir results --browser headlesschrome tests/
+```
+
+**Generate reports:**
+```bash
+robot --outputdir results tests/
+# Results saved to: results/report.html, results/log.html
 ```
 
 ## Contributing

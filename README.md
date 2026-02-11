@@ -152,29 +152,73 @@ pytest test_todo_app.py -v --html=report.html
 
 Robot Framework uses Python keyword libraries with Playwright for keyword-driven testing.
 
-#### Run All Tests
+#### Prerequisites
+
+1. Create a virtual environment:
 ```bash
 cd automation/python/robotframework
-pip install -r requirements.txt
-robot --outputdir results tests/
+python -m venv venv
 ```
+
+2. Activate the virtual environment:
+```powershell
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Windows CMD
+venv\Scripts\activate.bat
+
+# Linux/macOS
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Install Playwright browsers:
+```bash
+python -m playwright install chromium
+```
+
+#### Run Tests (Method 1: Using batch script - Windows)
+
+```powershell
+# Make sure venv is activated
+.\run_tests.bat
+```
+
+#### Run Tests (Method 2: Using PYTHONPATH directly)
+
+```bash
+# Set PYTHONPATH to current directory (parent of keywords folder)
+set PYTHONPATH=.
+robot --outputdir results tests\login.robot
+```
+
+#### Run Tests (Method 3: Using robot --pythonpath option)
+
+```bash
+robot --pythonpath . --outputdir results tests\login.robot
+```
+
+#### Run All Tests
 
 #### Run Specific Test File
 ```bash
-cd automation/python/robotframework
+# With venv activated
 robot --outputdir results tests/login.robot
 ```
 
 #### Run Tests with Tags
 ```bash
-cd automation/python/robotframework
 robot --outputdir results --include smoke tests/
 robot --outputdir results --exclude wip tests/
 ```
 
 #### Generate Different Report Formats
 ```bash
-cd automation/python/robotframework
 robot --outputdir results --logtitle "Test Log" tests/
 # Opens: results/log.html
 # Opens: results/report.html
@@ -183,7 +227,6 @@ robot --outputdir results --logtitle "Test Log" tests/
 
 #### Run in Headed Mode (See browser)
 ```bash
-cd automation/python/robotframework
 robot --outputdir results --browser headlesschrome tests/
 ```
 
