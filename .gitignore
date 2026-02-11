@@ -47,3 +47,4 @@ __pycache__/
 .pytest_cache/
 .pytest_cache
 tests-python/
+venv/
