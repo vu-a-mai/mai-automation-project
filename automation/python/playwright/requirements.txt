@@ -1,0 +1,6 @@
+# tests-python/playwright/requirements.txt
+pytest>=7.0.0
+pytest-playwright>=0.4.0
+playwright>=1.40.0
+pytest-html>=4.0.0
+pytest-json-report>=1.5.0
