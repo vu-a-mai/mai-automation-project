@@ -12,14 +12,12 @@ automation/
 │   │   ├── conftest.py
 │   │   └── requirements.txt
 │   └── robotframework/   # Python + Playwright + Robot Framework
-│       ├── keywords/     # Python keyword libraries (KEY FEATURE)
-│       │   ├── __init__.py
-│       │   ├── login_keywords.py
-│       │   └── todo_keywords.py
+│       ├── keywords/     # Python keyword libraries
+│       │   ├── LoginLibrary.py
+│       │   └── TodoLibrary.py
 │       ├── resources/    # Robot resource files
 │       ├── tests/        # *.robot test files
-│       │   ├── login.robot
-│       │   └── todo.robot
+│       │   └── login.robot
 │       └── requirements.txt
 ├── javascript/
 │   └── playwright/       # JavaScript Playwright tests (future)
@@ -38,49 +36,56 @@ automation/
 - **Pytest Plugin:** https://playwright.dev/python/docs/test-runners
 
 ### Python + Playwright + Robot Framework (KEY FEATURE)
-This is a hybrid approach: create custom Python keyword libraries and use them in Robot Framework test suites.
+Create custom Python keyword libraries using `@library` decorator.
 
-**How It Works:**
-1. Create Python classes with Playwright methods in `keywords/` directory
-2. Export classes in `__init__.py`
-3. Import and use keywords in `*.robot` test files
-
-**Example Python Keyword:**
+**Example Keyword Library:**
 ```python
-# keywords/login_keywords.py
+# keywords/LoginLibrary.py
 from playwright.sync_api import Page
+from robot.api.deco import library, keyword
 
-class LoginKeywords:
-    def __init__(self, page: Page):
-        self.page = page
 
+@library(scope="GLOBAL")
+class LoginLibrary:
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
+
+    def __init__(self):
+        self.page = None
+
+    @keyword
+    def navigate_to_login_page(self, url: str = "http://localhost:3000"):
+        self.page.goto(url)
+
+    @keyword
     def login(self, email: str, password: str):
         self.page.fill("#email", email)
         self.page.fill("#password", password)
         self.page.click("#login-button")
 ```
 
-**Example Robot Test:**
+**Usage in Robot Test:**
 ```robot
 *** Settings ***
-Library    keywords.LoginKeywords
+Library    keywords.LoginLibrary
 
 *** Test Cases ***
 Login Test
+    Navigate To Login Page
     Login    test@test.com    password
 ```
 
 **Benefits:**
-- Write Python keywords once, use in pytest AND Robot Framework
-- Human-readable test cases with Robot syntax
+- Use `@library` and `@keyword` decorators
+- Full Python power with Robot's readable syntax
 - Built-in HTML reports with screenshots
 - Tags for selective test execution
-- Full Python power for complex logic
+- Reusable across projects
 
 **Resources:**
 - **Robot Framework:** https://robotframework.org
 - **Robot Framework Browser:** https://marketsquare.github.io/robotframework-playwright/
 - **User Guide:** https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html
+- **Creating Test Libraries:** https://robotframework.org/robotframework/latest/CreatingTestLibraries.html
 
 ## Quick Start
 

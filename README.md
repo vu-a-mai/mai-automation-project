@@ -96,13 +96,15 @@ mai-automation-project/
 │   │   │   └── requirements.txt
 │   │   └── robotframework/   # ✅ Python + Playwright + Robot Framework
 │   │       ├── keywords/     # Python keyword libraries
-│   │       │   ├── __init__.py
-│   │       │   ├── login_keywords.py
-│   │       │   └── todo_keywords.py
+│   │       │   ├── LoginLibrary/
+│   │       │   │   ├── __init__.py
+│   │       │   │   └── LoginLibrary.py
+│   │       │   └── TodoLibrary/
+│   │       │       ├── __init__.py
+│   │       │       └── TodoLibrary.py
 │   │       ├── resources/    # Robot resource files
 │   │       ├── tests/        # *.robot test files
-│   │       │   ├── login.robot
-│   │       │   └── todo.robot
+│   │       │   └── login.robot
 │   │       └── requirements.txt
 │   ├── javascript/           # JavaScript tests (future)
 │   ├── typescript/           # TypeScript tests (future)
@@ -239,65 +241,71 @@ dotnet test --logger "html;log_filename=test-results.html"
 
 ## Python + Robot Framework: Custom Keyword Libraries
 
-This is the core feature: create reusable Python keywords and use them in Robot Framework test suites.
+This is the core feature: create custom Python keyword libraries using `@library` decorator and use them in Robot Framework test suites.
 
 ### Directory Structure
 
 ```
 automation/python/robotframework/
-├── keywords/               # Python keyword libraries
-│   ├── __init__.py        # Package init (export classes)
-│   ├── login_keywords.py   # Login keywords
-│   └── todo_keywords.py   # Todo keywords
-├── resources/              # Robot resource files (optional)
-├── tests/                 # *.robot test files
-│   ├── login.robot
-│   └── todo.robot
+├── keywords/                  # Python keyword libraries
+│   ├── LoginLibrary/         # Login library (folder name = library name)
+│   │   ├── __init__.py
+│   │   └── LoginLibrary.py   # Class name = file name
+│   └── TodoLibrary/
+│       ├── __init__.py
+│       └── TodoLibrary.py
+├── resources/                 # Robot resource files (optional)
+├── tests/                    # *.robot test files
+│   └── login.robot
 └── requirements.txt
 ```
 
-### Creating Python Keywords
+### Creating a Keyword Library
 
-Create Python classes with methods that become Robot keywords:
+Create a folder with the library name, then add `__init__.py` and `LibraryName.py`:
 
 ```python
-# keywords/login_keywords.py
-from playwright.sync_api import Page
-
-
-class LoginKeywords:
-    def __init__(self, page: Page):
-        self.page = page
-
-    def navigate_to_login_page(self, url: str = "http://localhost:3000"):
-        self.page.goto(url)
-
-    def fill_email(self, email: str):
-        self.page.fill("#email", email)
-
-    def fill_password(self, password: str):
-        self.page.fill("#password", password)
-
-    def click_login_button(self):
-        self.page.click("#login-button")
-
-    def login(self, email: str = "test@test.com", password: str = "password"):
-        self.fill_email(email)
-        self.fill_password(password)
-        self.click_login_button()
-
-    def verify_login_successful(self):
-        self.page.wait_for_url("**/todos", timeout=10000)
+# keywords/LoginLibrary/__init__.py
+from .LoginLibrary import LoginLibrary
 ```
 
-### Export Keywords in __init__.py
-
 ```python
-# keywords/__init__.py
-from .login_keywords import LoginKeywords
-from .todo_keywords import TodoKeywords
+# keywords/LoginLibrary/LoginLibrary.py
+from playwright.sync_api import Page
+from robot.api.deco import library, keyword, not_keyword
+import logging
 
-__all__ = ["LoginKeywords", "TodoKeywords"]
+logger = logging.getLogger(__name__)
+__version__ = "0.1"
+__author__ = "Vu Mai"
+
+
+@library(scope="GLOBAL", auto_keywords=True)
+class LoginLibrary:
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
+    ROBOT_LIBRARY_VERSION = __version__
+
+    def __init__(self):
+        self._page = None
+
+    @property
+    def page(self):
+        return self._page
+
+    @page.setter
+    def page(self, value):
+        self._page = value
+
+    @keyword("Navigate To Login Page")
+    def navigate_to_login_page(self, url: str = "http://localhost:3000"):
+        logger.debug(f"Navigating to {url}")
+        self._page.goto(url)
+
+    @keyword("Login")
+    def login(self, email: str = "test@test.com", password: str = "password"):
+        self._page.fill("#email", email)
+        self._page.fill("#password", password)
+        self._page.click("#login-button")
 ```
 
 ### Using Keywords in Robot Tests
@@ -307,39 +315,51 @@ Import and use Python keywords in *.robot files:
 ```robot
 *** Settings ***
 Library    Browser    strict=False
-Library    keywords.LoginKeywords
-Library    keywords.TodoKeywords
+Library    keywords.LoginLibrary
+Library    keywords.TodoLibrary
 
 *** Test Cases ***
-Login And Add Todo Should Succeed
+Login With Valid Credentials Should Succeed
+    [Documentation]    Test login with valid credentials
+    [Tags]    smoke    login
+    Navigate To Login Page    http://localhost:3000
+    Login With Default Credentials
+
+Add New Todo Should Be Successful
     [Documentation]    Login and add a new todo
-    [Tags]    smoke
+    [Tags]    smoke    todo
     Navigate To Login Page
     Login With Default Credentials
-    Verify Login Successful
     Add Todo    Learn Robot Framework
     Verify Todo Exists    Learn Robot Framework
-
-Complete A Todo
-    [Documentation]    Complete a todo item
-    [Tags]    todo
-    Navigate To Login Page
-    Login    test@test.com    password
-    Add Todo    Task to complete
-    Complete Todo    Task to complete
 
 *** Keywords ***
 Login With Default Credentials
     Login    test@test.com    password
 ```
 
+### Key Decorators
+
+| Decorator | Purpose |
+|-----------|---------|
+| `@library(scope="GLOBAL", auto_keywords=True)` | Mark class as Robot Framework library |
+| `@keyword("Custom Name")` | Expose method as Robot keyword with custom name |
+| `@not_keyword` | Exclude method from being a keyword |
+
+### Robot Framework Pattern
+
+1. **Folder name** = Library name (e.g., `LoginLibrary`)
+2. **Python file** = Same name as folder (e.g., `LoginLibrary.py`)
+3. **Class name** = Same as file (e.g., `class LoginLibrary`)
+4. **__init__.py** imports the class
+
 ### Benefits of Python + Robot Framework
 
-1. **Reusable Keywords:** Write Python classes/functions once, use in multiple test cases
+1. **Reusable Keywords:** Write Python classes with methods that become keywords
 2. **Hybrid Approach:** Combine Python logic with Robot's readable syntax
 3. **Built-in Reports:** HTML reports with screenshots, logs, and statistics
 4. **Tags:** Categorize tests for selective execution (`--include smoke`)
-5. **Page Object Pattern:** Organize keywords by page/feature (LoginKeywords, TodoKeywords)
+5. **Page Object Pattern:** Organize keywords by page/feature (LoginLibrary, TodoLibrary)
 6. **Shared Code:** Use same Python code across pytest and Robot Framework
 7. **Custom Logic:** Full Python power for complex operations
 
@@ -365,6 +385,7 @@ Open `report.html` in a browser to see:
 - **Robot Framework:** https://robotframework.org
 - **Robot Framework Browser:** https://marketsquare.github.io/robotframework-playwright/
 - **Robot Framework User Guide:** https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html
+- **Creating Test Libraries:** https://robotframework.org/robotframework/latest/CreatingTestLibraries.html
 - **Playwright Python:** https://playwright.dev/python
 
 ## Playwright Documentation
