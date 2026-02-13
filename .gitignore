@@ -43,6 +43,7 @@ next-env.d.ts
 # ignore docs and test-results
 docs/
 test-results/
+results/
 __pycache__/
 .pytest_cache/
 .pytest_cache
