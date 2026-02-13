@@ -1,444 +1,168 @@
 # Mai Automation Project
 
-A simple Todo App built for automation testing with multiple frameworks and languages.
+A Todo Application built with Next.js for demonstrating web automation testing with Robot Framework and Playwright.
 
-## Quick Start
+## Project Overview
 
-### 1. Start the App
-```bash
-npm install
-npm run dev
-```
+This project showcases a simple but complete Todo application with comprehensive automation tests using Robot Framework's keyword-driven approach. It demonstrates best practices for web UI automation with Python and Playwright.
 
-Open http://localhost:3000
+## Application Features
 
-### 2. Login
-- **Email:** test@test.com
-- **Password:** password
-
-### 3. Run Tests
-
-#### Python + Playwright (pytest)
-```bash
-cd automation/python/playwright
-pip install -r requirements.txt
-pytest test_todo_app.py -v
-```
-
-#### Python + Robot Framework (with Playwright)
-```bash
-cd automation/python/robotframework
-pip install -r requirements.txt
-robot --outputdir results tests/
-```
-
-#### JavaScript + Playwright
-```bash
-cd automation/javascript/playwright
-npm install
-npx playwright install
-npx playwright test
-```
-
-#### TypeScript + Playwright
-```bash
-cd automation/typescript/playwright
-npm install
-npx playwright install
-npx playwright test
-```
-
-#### Java + Playwright
-```bash
-cd automation/java/playwright
-mvn install
-mvn playwright:install
-mvn test
-```
-
-#### C# + Playwright
-```bash
-cd automation/csharp/playwright
-dotnet restore
-dotnet playwright install
-dotnet test
-```
-
-## Features to Test
-
-- ✅ Login/Logout
-- ✅ Add todos
-- ✅ Complete todos
-- ✅ Edit todos
-- ✅ Delete todos
-- ✅ Filter todos (All/Active/Completed)
+- **Login/Authentication** - Simple email/password login
+- **Todo Management** - Add, complete, and delete todo items
+- **Filtering** - View All, Active, or Completed todos
+- **Bulk Operations** - Clear all todos at once
 
 ## Test Credentials
 
 - **Email:** test@test.com
 - **Password:** password
 
+## Quick Start
+
+### 1. Start the Application
+
+```bash
+npm install
+npm run dev
+```
+
+The app runs at http://localhost:3000
+
+### 2. Run Automation Tests
+
+Navigate to the Robot Framework directory:
+
+```bash
+cd automation/python/robotframework
+
+# Setup virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/Mac
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install Playwright browsers
+python -m playwright install chromium
+
+# Run all tests
+robot --pythonpath . --outputdir results tests/web
+```
+
 ## Project Structure
 
 ```
 mai-automation-project/
-├── src/
+├── src/                          # Next.js Application
 │   ├── app/
-│   │   ├── page.tsx          # Login page
-│   │   ├── todos/page.tsx    # Todo dashboard
-│   │   └── layout.tsx        # Root layout
-│   └── globals.css           # Styles
-├── automation/               # Multi-language automation frameworks
-│   ├── python/
-│   │   ├── playwright/       # ✅ Python + Playwright (pytest)
-│   │   │   ├── test_*.py     # Test files
-│   │   │   ├── conftest.py   # Pytest config
-│   │   │   └── requirements.txt
-│   │   └── robotframework/   # ✅ Python + Playwright + Robot Framework
-│   │       ├── keywords/     # Python keyword libraries
-│   │       │   ├── LoginLibrary/
-│   │       │   │   ├── __init__.py
-│   │       │   │   └── LoginLibrary.py
-│   │       │   └── TodoLibrary/
-│   │       │       ├── __init__.py
-│   │       │       └── TodoLibrary.py
-│   │       ├── resources/    # Robot resource files
-│   │       ├── tests/        # *.robot test files
-│   │       │   └── login.robot
-│   │       └── requirements.txt
-│   ├── javascript/           # JavaScript tests (future)
-│   ├── typescript/           # TypeScript tests (future)
-│   ├── java/                 # Java tests (future)
-│   └── csharp/               # C# tests (future)
-├── docs/
-│   └── CONTRIBUTING.md
-└── README.md
+│   │   ├── page.tsx             # Login page
+│   │   ├── todos/
+│   │   │   └── page.tsx         # Todo dashboard
+│   │   └── layout.tsx
+│   └── ...
+│
+└── automation/
+    └── python/
+        └── robotframework/       # Robot Framework Tests
+            ├── libraries/
+            │   └── CustomKeywordsLibrary.py    # Python keyword library
+            ├── tests/
+            │   └── web/
+            │       └── todo_tests.robot        # Test cases
+            ├── requirements.txt
+            └── README.md
+```
+
+## Robot Framework Tests
+
+### Custom Keywords Library
+
+The `CustomKeywordsLibrary.py` provides business-level keywords:
+
+- `Open Browser` / `Close Browser`
+- `Go To Page` - Navigate to URL
+- `Login` - Authenticate user
+- `Add Todo` - Create new todo
+- `Complete Todo` - Mark as done
+- `Delete Todo` - Remove todo
+- `Filter Todos` - Filter by status
+- `Verify Todo Visible` - Check existence
+- `Count Todos` - Get todo count
+- `Clear All Todos` - Bulk delete
+
+### Test Coverage
+
+9 comprehensive test scenarios:
+
+1. **Login And Add Todo** - Basic workflow
+2. **Complete Todo** - Mark items complete
+3. **Delete Todo** - Remove items
+4. **Filter Active Todos** - View active only
+5. **Filter Completed Todos** - View completed only
+6. **Add Multiple Todos** - Bulk add
+7. **Complete All Todos** - Mark all done
+8. **Delete All Todos** - Clear all
+9. **Switch Between Filters** - Test all views
+
+### Viewing Test Results
+
+After execution, check `automation/python/robotframework/results/`:
+
+- `report.html` - Test summary with statistics
+- `log.html` - Detailed execution log with screenshots
+- `screenshots/` - Step-by-step visual documentation
+
+## Running Tests
+
+### Run All Tests
+```bash
+robot --pythonpath . --outputdir results tests/web
+```
+
+### Run Specific Test
+```bash
+robot --pythonpath . --outputdir results -t "Login And Add Todo" tests/web
+```
+
+### Run with Different Browser
+```bash
+robot --pythonpath . --outputdir results -v BROWSER:firefox tests/web
+```
+
+### Run in Headless Mode
+```bash
+robot --pythonpath . --outputdir results -v HEADLESS:True tests/web
 ```
 
 ## Tech Stack
 
-- **Frontend:** Next.js + React + Tailwind CSS
-- **Automation:**
-  - Python + Playwright (pytest)
-  - Python + Playwright + Robot Framework (keyword-driven)
-  - JavaScript/TypeScript + Playwright
-  - Java + Playwright
-  - C# + Playwright
+### Application
+- **Framework:** Next.js 16
+- **UI:** React + Tailwind CSS
 - **Icons:** Lucide React
 
-## Running Tests
+### Automation
+- **Test Framework:** Robot Framework
+- **Browser Engine:** Playwright (Python)
+- **Browser:** Chromium (default), Firefox, WebKit
+- **Reports:** Robot Framework HTML reports
 
-### Python + Playwright (pytest)
+## Documentation
 
-#### Headless (Fast)
-```bash
-cd automation/python/playwright
-pytest test_todo_app.py -v
-```
+- [Robot Framework Tests README](automation/python/robotframework/README.md)
+- [Robot Framework Docs](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html)
+- [Playwright Python](https://playwright.dev/python)
 
-#### Headed (See browser)
-```bash
-cd automation/python/playwright
-pytest test_todo_app.py -v --headed
-```
+## Why Robot Framework?
 
-#### Generate Report
-```bash
-cd automation/python/playwright
-pytest test_todo_app.py -v --html=report.html
-```
+1. **Readable Tests** - Keywords read like English
+2. **Built-in Reporting** - HTML reports with screenshots
+3. **Python Integration** - Custom keywords in Python
+4. **Cross-browser** - Test on Chromium, Firefox, WebKit
+5. **Maintainable** - Easy to update and extend
 
-### Python + Robot Framework + Playwright
+## License
 
-Robot Framework uses Python keyword libraries with Playwright for keyword-driven testing.
-
-#### Prerequisites
-
-1. Create a virtual environment:
-```bash
-cd automation/python/robotframework
-python -m venv venv
-```
-
-2. Activate the virtual environment:
-```powershell
-# Windows PowerShell
-.\venv\Scripts\Activate.ps1
-
-# Windows CMD
-venv\Scripts\activate.bat
-
-# Linux/macOS
-source venv/bin/activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Install Playwright browsers:
-```bash
-python -m playwright install chromium
-```
-
-#### Run Tests (Method 1: Using batch script - Windows)
-
-```powershell
-# Make sure venv is activated
-.\run_tests.bat
-```
-
-#### Run Tests (Method 2: Using PYTHONPATH directly)
-
-```bash
-# Set PYTHONPATH to current directory (parent of keywords folder)
-set PYTHONPATH=.
-robot --outputdir results tests\login.robot
-```
-
-#### Run Tests (Method 3: Using robot --pythonpath option)
-
-```bash
-robot --pythonpath . --outputdir results tests\login.robot
-```
-
-#### Run All Tests
-
-#### Run Specific Test File
-```bash
-# With venv activated
-robot --outputdir results tests/login.robot
-```
-
-#### Run Tests with Tags
-```bash
-robot --outputdir results --include smoke tests/
-robot --outputdir results --exclude wip tests/
-```
-
-#### Generate Different Report Formats
-```bash
-robot --outputdir results --logtitle "Test Log" tests/
-# Opens: results/log.html
-# Opens: results/report.html
-# Opens: results/output.xml
-```
-
-#### Run in Headed Mode (See browser)
-```bash
-robot --outputdir results --browser headlesschrome tests/
-```
-
-### JavaScript + Playwright
-
-#### Headless (Fast)
-```bash
-cd automation/javascript/playwright
-npx playwright test
-```
-
-#### Headed (See browser)
-```bash
-cd automation/javascript/playwright
-npx playwright test --project=headed
-```
-
-#### Generate HTML Report
-```bash
-cd automation/javascript/playwright
-npx playwright test --reporter=html
-```
-
-### TypeScript + Playwright
-
-Same as JavaScript since Playwright uses TypeScript natively.
-
-### Java + Playwright
-
-#### Run Tests
-```bash
-cd automation/java/playwright
-mvn test
-```
-
-#### Generate Report
-```bash
-cd automation/java/playwright
-mvn allure:serve
-```
-
-### C# + Playwright
-
-#### Run Tests
-```bash
-cd automation/csharp/playwright
-dotnet test
-```
-
-#### Generate HTML Report
-```bash
-cd automation/csharp/playwright
-dotnet test --logger "html;log_filename=test-results.html"
-```
-
-## Python + Robot Framework: Custom Keyword Libraries
-
-This is the core feature: create custom Python keyword libraries using `@library` decorator and use them in Robot Framework test suites.
-
-### Directory Structure
-
-```
-automation/python/robotframework/
-├── keywords/                  # Python keyword libraries
-│   ├── LoginLibrary/         # Login library (folder name = library name)
-│   │   ├── __init__.py
-│   │   └── LoginLibrary.py   # Class name = file name
-│   └── TodoLibrary/
-│       ├── __init__.py
-│       └── TodoLibrary.py
-├── resources/                 # Robot resource files (optional)
-├── tests/                    # *.robot test files
-│   └── login.robot
-└── requirements.txt
-```
-
-### Creating a Keyword Library
-
-Create a folder with the library name, then add `__init__.py` and `LibraryName.py`:
-
-```python
-# keywords/LoginLibrary/__init__.py
-from .LoginLibrary import LoginLibrary
-```
-
-```python
-# keywords/LoginLibrary/LoginLibrary.py
-from playwright.sync_api import Page
-from robot.api.deco import library, keyword, not_keyword
-import logging
-
-logger = logging.getLogger(__name__)
-__version__ = "0.1"
-__author__ = "Vu Mai"
-
-
-@library(scope="GLOBAL", auto_keywords=True)
-class LoginLibrary:
-    ROBOT_LIBRARY_SCOPE = "GLOBAL"
-    ROBOT_LIBRARY_VERSION = __version__
-
-    def __init__(self):
-        self._page = None
-
-    @property
-    def page(self):
-        return self._page
-
-    @page.setter
-    def page(self, value):
-        self._page = value
-
-    @keyword("Navigate To Login Page")
-    def navigate_to_login_page(self, url: str = "http://localhost:3000"):
-        logger.debug(f"Navigating to {url}")
-        self._page.goto(url)
-
-    @keyword("Login")
-    def login(self, email: str = "test@test.com", password: str = "password"):
-        self._page.fill("#email", email)
-        self._page.fill("#password", password)
-        self._page.click("#login-button")
-```
-
-### Using Keywords in Robot Tests
-
-Import and use Python keywords in *.robot files:
-
-```robot
-*** Settings ***
-Library    Browser    strict=False
-Library    keywords.LoginLibrary
-Library    keywords.TodoLibrary
-
-*** Test Cases ***
-Login With Valid Credentials Should Succeed
-    [Documentation]    Test login with valid credentials
-    [Tags]    smoke    login
-    Navigate To Login Page    http://localhost:3000
-    Login With Default Credentials
-
-Add New Todo Should Be Successful
-    [Documentation]    Login and add a new todo
-    [Tags]    smoke    todo
-    Navigate To Login Page
-    Login With Default Credentials
-    Add Todo    Learn Robot Framework
-    Verify Todo Exists    Learn Robot Framework
-
-*** Keywords ***
-Login With Default Credentials
-    Login    test@test.com    password
-```
-
-### Key Decorators
-
-| Decorator | Purpose |
-|-----------|---------|
-| `@library(scope="GLOBAL", auto_keywords=True)` | Mark class as Robot Framework library |
-| `@keyword("Custom Name")` | Expose method as Robot keyword with custom name |
-| `@not_keyword` | Exclude method from being a keyword |
-
-### Robot Framework Pattern
-
-1. **Folder name** = Library name (e.g., `LoginLibrary`)
-2. **Python file** = Same name as folder (e.g., `LoginLibrary.py`)
-3. **Class name** = Same as file (e.g., `class LoginLibrary`)
-4. **__init__.py** imports the class
-
-### Benefits of Python + Robot Framework
-
-1. **Reusable Keywords:** Write Python classes with methods that become keywords
-2. **Hybrid Approach:** Combine Python logic with Robot's readable syntax
-3. **Built-in Reports:** HTML reports with screenshots, logs, and statistics
-4. **Tags:** Categorize tests for selective execution (`--include smoke`)
-5. **Page Object Pattern:** Organize keywords by page/feature (LoginLibrary, TodoLibrary)
-6. **Shared Code:** Use same Python code across pytest and Robot Framework
-7. **Custom Logic:** Full Python power for complex operations
-
-### Robot Framework Reports
-
-After running tests, you'll get:
-
-```
-results/
-├── log.html        # Detailed test log with screenshots
-├── report.html     # Summary report with statistics
-└── output.xml      # XML output for further processing
-```
-
-Open `report.html` in a browser to see:
-- Test execution summary
-- Pass/fail statistics
-- Screenshots on failure
-- Detailed logs for each test
-
-### Resources
-
-- **Robot Framework:** https://robotframework.org
-- **Robot Framework Browser:** https://marketsquare.github.io/robotframework-playwright/
-- **Robot Framework User Guide:** https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html
-- **Creating Test Libraries:** https://robotframework.org/robotframework/latest/CreatingTestLibraries.html
-- **Playwright Python:** https://playwright.dev/python
-
-## Playwright Documentation
-
-- **Official Site:** https://playwright.dev
-- **Python:** https://playwright.dev/python
-- **JavaScript/TypeScript:** https://playwright.dev/docs/intro
-- **Java:** https://playwright.dev/java/docs/intro
-- **C#:** https://playwright.dev/dotnet/docs/intro
-
-## Contributing
-
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines on keeping the project clean before committing.
+[Your License]

@@ -1,85 +1,144 @@
-# Todo App - Robot Framework Automation
+# Todo Application - Robot Framework Automation
 
-Simple automation tests for the Todo application using Robot Framework and Playwright.
+This project contains automated tests for a Next.js Todo Application using Robot Framework and Playwright.
+
+## Overview
+
+A simple automation project demonstrating web UI testing with Robot Framework's keyword-driven approach. The project uses Playwright as the browser automation engine behind Robot Framework keywords.
 
 ## Project Structure
 
 ```
-robotframework/
-├── libraries/
-│   └── CustomKeywordsLibrary.py   # Custom keywords for the app
-├── tests/
-│   └── web/
-│       └── todo_tests.robot       # Test cases
-├── requirements.txt               # Python dependencies
-└── README.md                      # This file
+mai-automation-project/
+├── src/                          # Next.js Todo App source code
+│   ├── app/
+│   │   ├── page.tsx             # Login page
+│   │   ├── todos/page.tsx       # Todo dashboard
+│   │   └── layout.tsx
+│   └── ...
+│
+└── automation/
+    └── python/
+        └── robotframework/       # Robot Framework tests
+            ├── libraries/
+            │   └── CustomKeywordsLibrary.py    # Custom Python keywords
+            ├── tests/
+            │   └── web/
+            │       └── todo_tests.robot        # Test cases
+            ├── requirements.txt
+            └── README.md
 ```
 
-## Setup
+## Features Tested
 
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-python -m playwright install
-```
+- ✅ User login/logout
+- ✅ Add todo items
+- ✅ Complete todo items
+- ✅ Delete todo items
+- ✅ Filter todos (All/Active/Completed)
+- ✅ Bulk operations
 
-2. Start the Todo app:
+## Test Credentials
+
+- **Email:** test@test.com
+- **Password:** password
+
+## Quick Start
+
+### 1. Start the Application
+
 ```bash
+# From project root
+npm install
 npm run dev
 ```
 
-## Running Tests
+The app will be available at http://localhost:3000
 
-Run all tests:
+### 2. Run Robot Framework Tests
+
 ```bash
+# Navigate to robotframework directory
+cd automation/python/robotframework
+
+# Create and activate virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/Mac
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install Playwright browsers
+python -m playwright install chromium
+
+# Run all tests
 robot --pythonpath . --outputdir results tests/web
-```
-
-Run specific test:
-```bash
-robot --pythonpath . --outputdir results -t "Login And Add Todo" tests/web
-```
-
-Run with different browser:
-```bash
-robot --pythonpath . --outputdir results -v BROWSER:firefox tests/web
-```
-
-Run in headless mode:
-```bash
-robot --pythonpath . --outputdir results -v HEADLESS:True tests/web
 ```
 
 ## Available Keywords
 
-- `Open Browser` - Open browser
-- `Close Browser` - Close browser  
-- `Go To Page` - Navigate to URL
-- `Login` - Login with email/password
-- `Add Todo` - Add a todo item
-- `Complete Todo` - Complete a todo
-- `Delete Todo` - Delete a todo
-- `Filter Todos` - Filter by all/active/completed
-- `Verify Todo Visible` - Check todo exists
-- `Verify Todo Not Visible` - Check todo removed
-- `Count Todos` - Get todo count
-- `Clear All Todos` - Delete all todos
+The `CustomKeywordsLibrary` provides these keywords:
+
+| Keyword | Description |
+|---------|-------------|
+| `Open Browser` | Launch browser instance |
+| `Close Browser` | Close browser and cleanup |
+| `Go To Page` | Navigate to URL |
+| `Login` | Login with email/password |
+| `Add Todo` | Add a new todo item |
+| `Complete Todo` | Mark todo as completed |
+| `Delete Todo` | Remove a todo item |
+| `Filter Todos` | Filter by all/active/completed |
+| `Verify Todo Visible` | Check todo exists |
+| `Verify Todo Not Visible` | Check todo removed |
+| `Count Todos` | Get number of todos |
+| `Clear All Todos` | Delete all todos |
 
 ## Test Cases
 
-1. **Login And Add Todo** - Basic login and add
-2. **Complete Todo** - Mark todo as complete
-3. **Delete Todo** - Remove a todo
-4. **Filter Active Todos** - Show only active
-5. **Filter Completed Todos** - Show only completed
+The test suite (`todo_tests.robot`) includes 9 test scenarios:
+
+1. **Login And Add Todo** - Basic login and add functionality
+2. **Complete Todo** - Mark todo as completed
+3. **Delete Todo** - Remove a todo item
+4. **Filter Active Todos** - Show only active items
+5. **Filter Completed Todos** - Show only completed items
 6. **Add Multiple Todos** - Add several todos
 7. **Complete All Todos** - Complete all items
 8. **Delete All Todos** - Clear all todos
-9. **Switch Between Filters** - Test all filters
+9. **Switch Between Filters** - Test all filter options
 
-## View Results
+## Viewing Results
 
-After running tests:
-- `results/log.html` - Detailed log with screenshots
-- `results/report.html` - Test summary
-- `results/screenshots/` - Step-by-step screenshots
+After test execution, view results in `results/`:
+
+- `log.html` - Detailed execution log with screenshots
+- `report.html` - Test summary and statistics
+- `screenshots/` - Step-by-step screenshots
+
+## Running Specific Tests
+
+```bash
+# Run specific test
+robot --pythonpath . --outputdir results -t "Login And Add Todo" tests/web
+
+# Run with different browser
+robot --pythonpath . --outputdir results -v BROWSER:firefox tests/web
+
+# Run in headless mode
+robot --pythonpath . --outputdir results -v HEADLESS:True tests/web
+```
+
+## Tech Stack
+
+- **Frontend:** Next.js 16 + React + Tailwind CSS
+- **Automation:** Robot Framework + Playwright (Python)
+- **Browser:** Chromium (default), Firefox, WebKit support
+- **Test Reports:** Built-in Robot Framework HTML reports
+
+## Resources
+
+- **Robot Framework:** https://robotframework.org
+- **Playwright Python:** https://playwright.dev/python
+- **Robot Framework User Guide:** https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html
