@@ -1,0 +1,98 @@
+name: Automation Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  test-typescript:
+    name: TypeScript Playwright Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: ./automation/typescript
+        run: npm install
+
+      - name: Install Playwright browsers
+        working-directory: ./automation/typescript
+        run: npx playwright install --with-deps chromium
+
+      - name: Start application
+        run: |
+          npm run dev &
+          sleep 10
+
+      - name: Run TypeScript tests
+        working-directory: ./automation/typescript
+        run: npx playwright test --project=chromium
+        env:
+          BASE_URL: http://localhost:3000
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-screenshots
+          path: automation/typescript/test-output/
+          retention-days: 30
+
+  test-python:
+    name: Python Robot Framework Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create virtual environment
+        working-directory: ./automation/python/robotframework
+        run: python -m venv venv
+
+      - name: Install dependencies
+        working-directory: ./automation/python/robotframework
+        run: |
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        working-directory: ./automation/python/robotframework
+        run: |
+          source venv/bin/activate
+          python -m playwright install chromium
+
+      - name: Start application
+        run: |
+          npm run dev &
+          sleep 10
+
+      - name: Run Python tests
+        working-directory: ./automation/python/robotframework
+        run: |
+          source venv/bin/activate
+          python -m robot --pythonpath . tests/web
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-screenshots
+          path: automation/python/robotframework/test-output/
+          retention-days: 30
