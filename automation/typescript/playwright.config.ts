@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Support both localhost and production URL
+// Default to production, override with BASE_URL=http://localhost:3000 for local testing
+const baseURL = process.env.BASE_URL || 'https://mai-automation-project.vercel.app';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -15,7 +19,7 @@ export default defineConfig({
   timeout: 90000,
   
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL,
     trace: 'on-first-retry',
     screenshot: 'on',
     // Increase action timeout for slower browsers

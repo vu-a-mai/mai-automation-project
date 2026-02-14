@@ -12,7 +12,7 @@ Python-based keyword-driven automation tests for the Todo application using Robo
 
 ## Quick Start
 
-### 1. Start the Application
+### 1. Start the Application (for local testing)
 
 From project root:
 ```bash
@@ -21,6 +21,8 @@ npm run dev
 ```
 
 App runs at http://localhost:3000
+
+Or use the deployed version: https://mai-automation-project.vercel.app
 
 ### 2. Setup Python Environment
 
@@ -166,6 +168,21 @@ Example:
 test-output/2026-02-14_10-30-00_Run_001/chromium/01_Login_And_Add_Todo/01_page_loaded.png
 ```
 
+## Testing Against Different Environments
+
+Run tests against production (default) or localhost:
+
+```bash
+# Run against production (default)
+robot --pythonpath . tests/web
+
+# Run against localhost
+robot --pythonpath . -v URL:http://localhost:3000 tests/web
+
+# Run specific test against localhost
+robot --pythonpath . -v URL:http://localhost:3000 -t "Login And Add Todo" tests/web
+```
+
 ## Cross-Browser Testing
 
 Test on different browsers:
@@ -204,9 +221,20 @@ python -m playwright install
 ```
 
 ### Tests fail to connect
-Ensure the Todo app is running:
+Ensure the app is accessible:
+
+**For localhost testing:**
 ```bash
 npm run dev  # in project root
+```
+
+**For production testing:**
+Verify the URL is accessible: https://mai-automation-project.vercel.app
+
+**To switch environments:**
+```bash
+# Use production URL
+robot --pythonpath . -v URL:https://mai-automation-project.vercel.app tests/web
 ```
 
 ## Tech Stack

@@ -22,6 +22,24 @@ npx playwright install
 
 ## Running Tests
 
+### Environment Variables
+
+The tests support both **production** (default) and **localhost** URLs:
+
+```bash
+# Run against production (default)
+npx playwright test
+
+# Run against localhost
+BASE_URL=http://localhost:3000 npx playwright test
+
+# Windows PowerShell
+$env:BASE_URL="http://localhost:3000"; npx playwright test
+
+# Windows CMD
+set BASE_URL=http://localhost:3000 && npx playwright test
+```
+
 ### Run all tests (all 3 browsers)
 ```bash
 npx playwright test

@@ -91,6 +91,30 @@ run_tests.bat         # Windows
 - Check `test-output/<timestamp>/<browser>/<test>/` for organized screenshots
 - Open `log.html` and `report.html` for Robot Framework reports
 
+### Testing Against Different Environments
+
+Both frameworks support testing against production (default) or localhost:
+
+**TypeScript:**
+```bash
+# Run against production (default)
+npx playwright test
+
+# Run against localhost
+BASE_URL=http://localhost:3000 npx playwright test
+```
+
+**Python:**
+```bash
+# Run against production (default)
+robot --pythonpath . tests/web
+
+# Run against localhost
+robot --pythonpath . -v URL:http://localhost:3000 tests/web
+```
+
+**Note:** By default, tests run against the deployed production app at https://mai-automation-project.vercel.app. Use the commands above to test locally.
+
 ## Project Structure
 
 ```

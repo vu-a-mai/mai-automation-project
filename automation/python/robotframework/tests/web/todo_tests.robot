@@ -3,7 +3,9 @@ Library    libraries.CustomKeywordsLibrary
 
 
 *** Variables ***
-${URL}      http://localhost:3000
+# Default to production, can be overridden via command line:
+# robot --pythonpath . -v URL:http://localhost:3000 tests/web
+${URL}      https://mai-automation-project.vercel.app
 ${EMAIL}    test@test.com
 ${PASSWORD}    password
 
