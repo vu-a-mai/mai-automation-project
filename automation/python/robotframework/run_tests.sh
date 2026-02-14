@@ -1,11 +1,27 @@
 #!/bin/bash
-# Run Robot Framework tests with proper PYTHONPATH
+# Run Robot Framework tests on Linux/Mac
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# Set PYTHONPATH to parent of keywords folder
+# Set PYTHONPATH to current directory
 export PYTHONPATH="$SCRIPT_DIR"
 
+echo "=========================================="
+echo "  Running Robot Framework Tests"
+echo "=========================================="
+echo ""
+echo "Screenshots will be saved to:"
+echo "  test-output/<timestamp>/<browser>/<test>/"
+echo ""
+
 # Run tests
-robot --outputdir results tests/login.robot
+robot --outputdir results tests/web/
+
+echo ""
+echo "=========================================="
+echo "  Tests Complete!"
+echo "=========================================="
+echo ""
+echo "Check test-output/ for organized screenshots"
+echo ""

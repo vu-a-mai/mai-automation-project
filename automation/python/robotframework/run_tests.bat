@@ -1,16 +1,28 @@
 @echo off
-REM Run Robot Framework tests
+REM Run Robot Framework tests on Windows
 
 cd /d %~dp0
 
 REM Set PYTHONPATH to current directory
 set PYTHONPATH=%CD%
 
-REM Run tests in headless mode
-set "HEADLESS=True"
+echo ==========================================
+echo  Running Robot Framework Tests
+echo ==========================================
+echo.
+echo Screenshots will be saved to:
+echo   test-output/^<timestamp^>/^<browser^>/^<test^>/
+echo.
 
-echo Running tests in HEADLESS mode...
+REM Run tests
+robot --outputdir results tests\web\
 
-robot --outputdir results tests\login.robot
+echo.
+echo ==========================================
+echo  Tests Complete!
+echo ==========================================
+echo.
+echo Check test-output/ for organized screenshots
+echo.
 
 pause

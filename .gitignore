@@ -40,12 +40,61 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# ignore docs and test-results
-docs/
+# Test outputs and results
+test-output/
 test-results/
 results/
+results_*/
+screenshots/
+
+# Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
 .pytest_cache/
-.pytest_cache
-tests-python/
+
+# Virtual Environment
 venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Documentation
+docs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Operating System Files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Playwright
+playwright-report/
+playwright/.cache/
+
+# Robot Framework
+output.xml
+log.html
+report.html
+*.html
+!.gitkeep
