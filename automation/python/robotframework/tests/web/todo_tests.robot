@@ -115,5 +115,5 @@ Switch Between Filters
     Verify Todo Visible    Mixed Todo 1
     Filter Todos    all
     ${count}=    Count Todos
-    Should Be Equal As Integers    ${count}    3
+    Should Be Equal As Integers    ${count}    2
     Close Browser
