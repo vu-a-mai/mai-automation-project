@@ -179,6 +179,10 @@ class CustomKeywordsLibrary:
         filename = f"{step:02d}_{name}.png"
         filepath = os.path.join(screenshots_dir, filename)
         
+        # Wait for page to be ready before screenshot (fixes CI timing issues)
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(500)
+        
         page.screenshot(path=filepath, full_page=True)
         
         # Log with relative path
