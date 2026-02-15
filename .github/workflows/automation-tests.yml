@@ -20,26 +20,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
         working-directory: ./automation/typescript
-        run: npm install
+        run: npm ci
+
+      - name: Prepare Playwright wrapper
+        working-directory: ./automation/typescript
+        run: chmod +x ./node_modules/.bin/playwright
 
       - name: Install Playwright browsers
         working-directory: ./automation/typescript
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install chromium firefox
 
-      - name: Start application
-        run: |
-          npm run dev &
-          sleep 10
-
-      - name: Run TypeScript tests
+      - name: Run TypeScript tests (Chromium)
         working-directory: ./automation/typescript
-        run: npx playwright test --project=chromium
+        run: ./node_modules/.bin/playwright test --project=chromium
         env:
-          BASE_URL: http://localhost:3000
+          BASE_URL: https://mai-automation-project.vercel.app
+
+      - name: Run TypeScript tests (Firefox)
+        working-directory: ./automation/typescript
+        run: ./node_modules/.bin/playwright test --project=firefox
+        env:
+          BASE_URL: https://mai-automation-project.vercel.app
 
       - name: Upload screenshots
         if: always()
@@ -47,7 +51,7 @@ jobs:
         with:
           name: typescript-screenshots
           path: automation/typescript/test-output/
-          retention-days: 30
+          retention-days: 7
 
   test-python:
     name: Python Robot Framework Tests
@@ -76,18 +80,19 @@ jobs:
         working-directory: ./automation/python/robotframework
         run: |
           source venv/bin/activate
-          python -m playwright install chromium
+          python -m playwright install chromium firefox
 
-      - name: Start application
-        run: |
-          npm run dev &
-          sleep 10
-
-      - name: Run Python tests
+      - name: Run Python tests (Chromium)
         working-directory: ./automation/python/robotframework
         run: |
           source venv/bin/activate
-          python -m robot --pythonpath . tests/web
+          xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:chromium tests/web
+
+      - name: Run Python tests (Firefox)
+        working-directory: ./automation/python/robotframework
+        run: |
+          source venv/bin/activate
+          xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:firefox tests/web
 
       - name: Upload screenshots
         if: always()
@@ -95,4 +100,4 @@ jobs:
         with:
           name: python-screenshots
           path: automation/python/robotframework/test-output/
-          retention-days: 30
+          retention-days: 7
