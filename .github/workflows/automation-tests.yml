@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: ./automation/typescript
-        run: ./node_modules/.bin/playwright install chromium firefox
+        run: ./node_modules/.bin/playwright install chromium firefox webkit
 
       - name: Run TypeScript tests (Chromium)
         working-directory: ./automation/typescript
@@ -42,6 +42,12 @@ jobs:
       - name: Run TypeScript tests (Firefox)
         working-directory: ./automation/typescript
         run: ./node_modules/.bin/playwright test --project=firefox
+        env:
+          BASE_URL: https://mai-automation-project.vercel.app
+
+      - name: Run TypeScript tests (WebKit)
+        working-directory: ./automation/typescript
+        run: ./node_modules/.bin/playwright test --project=webkit
         env:
           BASE_URL: https://mai-automation-project.vercel.app
 
@@ -80,7 +86,7 @@ jobs:
         working-directory: ./automation/python/robotframework
         run: |
           source venv/bin/activate
-          python -m playwright install chromium firefox
+          python -m playwright install chromium firefox webkit
 
       - name: Run Python tests (Chromium)
         working-directory: ./automation/python/robotframework
@@ -93,6 +99,12 @@ jobs:
         run: |
           source venv/bin/activate
           xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:firefox tests/web
+
+      - name: Run Python tests (WebKit)
+        working-directory: ./automation/python/robotframework
+        run: |
+          source venv/bin/activate
+          xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:webkit tests/web
 
       - name: Upload screenshots
         if: always()
