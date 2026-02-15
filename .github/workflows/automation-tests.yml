@@ -33,6 +33,10 @@ jobs:
         working-directory: ./automation/typescript
         run: ./node_modules/.bin/playwright install chromium firefox webkit
 
+      - name: Install system dependencies for WebKit
+        working-directory: ./automation/typescript
+        run: sudo ./node_modules/.bin/playwright install-deps webkit
+
       - name: Run TypeScript tests (Chromium)
         working-directory: ./automation/typescript
         run: ./node_modules/.bin/playwright test --project=chromium
@@ -87,6 +91,12 @@ jobs:
         run: |
           source venv/bin/activate
           python -m playwright install chromium firefox webkit
+
+      - name: Install system dependencies for WebKit
+        working-directory: ./automation/python/robotframework
+        run: |
+          source venv/bin/activate
+          sudo python -m playwright install-deps webkit
 
       - name: Run Python tests (Chromium)
         working-directory: ./automation/python/robotframework
