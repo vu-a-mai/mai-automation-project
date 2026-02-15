@@ -76,45 +76,32 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Create virtual environment
-        working-directory: ./automation/python/robotframework
-        run: python -m venv venv
-
-      - name: Install dependencies
+      - name: Create virtual environment and install dependencies
         working-directory: ./automation/python/robotframework
         run: |
+          python -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
-
-      - name: Install Playwright browsers
-        working-directory: ./automation/python/robotframework
-        run: |
-          source venv/bin/activate
           python -m playwright install chromium firefox webkit
-
-      - name: Install system dependencies for WebKit
-        working-directory: ./automation/python/robotframework
-        run: |
-          source venv/bin/activate
-          sudo python -m playwright install-deps webkit
+          sudo $(which python) -m playwright install-deps webkit
 
       - name: Run Python tests (Chromium)
         working-directory: ./automation/python/robotframework
         run: |
           source venv/bin/activate
-          xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:chromium tests/web
+          xvfb-run --auto-servernum robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:chromium tests/web
 
       - name: Run Python tests (Firefox)
         working-directory: ./automation/python/robotframework
         run: |
           source venv/bin/activate
-          xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:firefox tests/web
+          xvfb-run --auto-servernum robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:firefox tests/web
 
       - name: Run Python tests (WebKit)
         working-directory: ./automation/python/robotframework
         run: |
           source venv/bin/activate
-          xvfb-run --auto-servernum python -m robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:webkit tests/web
+          xvfb-run --auto-servernum robot --pythonpath . -v URL:https://mai-automation-project.vercel.app -v BROWSER:webkit tests/web
 
       - name: Upload screenshots
         if: always()
