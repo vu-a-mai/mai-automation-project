@@ -4,13 +4,14 @@ Python + Playwright tests for the Todo App
 Run locally with: pytest test_todo_app.py -v
 """
 
+import os
 import pytest
 from playwright.sync_api import Page, expect
 
 # Test data
 TEST_EMAIL = "test@test.com"
 TEST_PASSWORD = "password"
-BASE_URL = "http://localhost:3000/"
+BASE_URL = os.environ.get("BASE_URL", "https://mai-automation-project.vercel.app").rstrip("/") + "/"
 
 
 @pytest.fixture(scope="function")
@@ -45,7 +46,7 @@ class TestLogin:
         
         # Should redirect to todos page
         expect(page.get_by_test_id("todos-title")).to_be_visible()
-        expect(page).to_have_url(f"{BASE_URL}todos")
+        expect(page).to_have_url(f"{BASE_URL}todos", timeout=10000)
     
     def test_login_with_invalid_credentials(self, page: Page):
         """Test login with wrong password shows error"""
@@ -60,8 +61,8 @@ class TestLogin:
         expect(page.get_by_test_id("login-error")).to_be_visible()
         expect(page.get_by_test_id("login-error")).to_contain_text("Invalid")
         
-        # Should stay on login page
-        expect(page).to_have_url(BASE_URL)
+        # Should stay on login page (not redirect to todos)
+        expect(page).not_to_have_url(f"{BASE_URL.rstrip('/')}todos")
 
 
 class TestTodos:

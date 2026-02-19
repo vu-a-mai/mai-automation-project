@@ -36,7 +36,6 @@ export default defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Chromium is fastest, no extra delays needed
         launchOptions: { slowMo: 0 },
       },
     },

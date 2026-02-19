@@ -4,7 +4,10 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# Set PYTHONPATH to current directory
+if [ -d "venv" ]; then
+    source venv/bin/activate
+fi
+
 export PYTHONPATH="$SCRIPT_DIR"
 
 echo "=========================================="
